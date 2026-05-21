@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astracrux</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f9fbff;
+      --panel: rgba(255, 255, 255, 0.72);
+      --card: rgba(255, 255, 255, 0.78);
+      --border: rgba(56, 98, 147, 0.15);
+      --text: #14233a;
+      --muted: #63718d;
+      --accent: #4c7ecf;
+      --accent-soft: #7cb8ff;
+      --shadow: 0 22px 45px rgba(18, 38, 66, 0.12);
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Inter", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 8% 12%, rgba(124, 183, 255, 0.55), transparent 16%),
+                  radial-gradient(circle at 88% 22%, rgba(255, 128, 196, 0.42), transparent 14%),
+                  radial-gradient(circle at 55% 72%, rgba(140, 245, 210, 0.34), transparent 12%),
+                  linear-gradient(140deg, rgba(255, 255, 255, 0.32), transparent 30%),
+                  linear-gradient(220deg, rgba(124, 176, 255, 0.22), transparent 42%);
+      filter: blur(34px);
+      opacity: 0.96;
+      pointer-events: none;
+      animation: drift 5.5s ease-in-out infinite;
+      transform: translateZ(0);
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.28), transparent 12%),
+                  radial-gradient(circle at 70% 28%, rgba(202, 225, 255, 0.28), transparent 12%),
+                  linear-gradient(60deg, rgba(255, 255, 255, 0.24), transparent 24%),
+                  linear-gradient(-60deg, rgba(255, 255, 255, 0.18), transparent 34%);
+      filter: blur(12px);
+      opacity: 0.92;
+      pointer-events: none;
+      animation: sheen 7s ease-in-out infinite;
+    }
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      20% { transform: translate(-36px, 20px) scale(1.04); }
+      40% { transform: translate(26px, 28px) scale(1.03); }
+      60% { transform: translate(-22px, -24px) scale(1.04); }
+      80% { transform: translate(28px, -18px) scale(1.03); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+    @keyframes sheen {
+      0% { transform: translateX(-34px) translateY(0); }
+      50% { transform: translateX(28px) translateY(10px); }
+      100% { transform: translateX(-34px) translateY(0); }
+    }
+    .container {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 72px;
+      position: relative;
+      z-index: 1;
+    }
+    .brand {
+      text-align: center;
+      margin-bottom: 34px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(2.6rem, 4vw, 3.6rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .brand p {
+      margin: 18px auto 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 1.03rem;
+      line-height: 1.85;
+    }
+    .hero-cta {
+      margin: 26px auto 0;
+      max-width: 760px;
+      padding: 20px 24px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(56, 98, 147, 0.14);
+      box-shadow: 0 20px 35px rgba(18, 38, 66, 0.08);
+      backdrop-filter: blur(18px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      justify-content: space-between;
+    }
+    .hero-cta p {
+      margin: 0;
+      color: var(--text);
+      font-size: 1rem;
+      line-height: 1.7;
+      flex: 1 1 320px;
+    }
+    .button.primary {
+      background: rgba(76, 126, 207, 0.24);
+      border-color: rgba(76, 126, 207, 0.3);
+      color: var(--text);
+    }
+    .button.primary:hover {
+      background: rgba(76, 126, 207, 0.34);
+    }
+    .panel {
+      position: relative;
+      background: rgba(255, 255, 255, 0.54);
+      border: 1px solid rgba(56, 98, 147, 0.14);
+      border-radius: 34px;
+      box-shadow: 0 28px 80px rgba(18, 38, 66, 0.14);
+      overflow: hidden;
+      backdrop-filter: blur(30px);
+      background-clip: padding-box;
+    }
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), transparent 42%);
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    .panel::after {
+      content: "";
+      position: absolute;
+      top: -24px;
+      left: -24px;
+      width: calc(100% + 48px);
+      height: calc(100% + 48px);
+      z-index: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at 20% 20%, rgba(124, 183, 255, 0.16), transparent 18%),
+                  radial-gradient(circle at 80% 10%, rgba(255, 178, 231, 0.12), transparent 16%);
+      filter: blur(24px);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .panel > * {
+      position: relative;
+      z-index: 1;
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: rgba(255, 255, 255, 0.34);
+      border-bottom: 1px solid rgba(56, 98, 147, 0.16);
+      backdrop-filter: blur(20px);
+    }
+    .tab-button {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 20px 24px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: color 0.22s ease, background 0.22s ease;
+    }
+    .tab-button:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.32);
+    }
+    .tab-button.active {
+      color: var(--accent);
+      background: rgba(124, 183, 255, 0.18);
+      border-bottom: 3px solid rgba(76, 126, 207, 0.9);
+    }
+    .tab-panel {
+      padding: 36px 42px;
+    }
+    .tab-panel > h2 {
+      margin-top: 0;
+      font-size: 1.95rem;
+      letter-spacing: 0.01em;
+      color: var(--text);
+    }
+    .tab-panel p,
+    .tab-panel li {
+      color: var(--text);
+      font-size: 1rem;
+      line-height: 1.85;
+    }
+    .tab-panel ul {
+      margin: 18px 0 0;
+      padding-left: 1.3rem;
+      list-style: disc;
+    }
+    .tab-panel li {
+      margin-bottom: 10px;
+    }
+    .highlight {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .info-grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 24px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .info-card {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(56, 98, 147, 0.14);
+      border-radius: 24px;
+      padding: 24px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      backdrop-filter: blur(28px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 20px 40px rgba(18, 38, 66, 0.1);
+    }
+    .info-card strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+    }
+    .cta {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 26px;
+      border-radius: 999px;
+      border: 1px solid rgba(76, 126, 207, 0.22);
+      background: rgba(76, 126, 207, 0.14);
+      color: var(--text);
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      box-shadow: 0 18px 36px rgba(18, 38, 66, 0.12);
+      backdrop-filter: blur(14px);
+      min-width: 170px;
+    }
+    .button:hover {
+      transform: translateY(-2px);
+      background: rgba(76, 126, 207, 0.28);
+      box-shadow: 0 20px 42px rgba(18, 38, 66, 0.18);
+    }
+    .note {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 34px;
+      font-size: 0.95rem;
+    }
+    @media (max-width: 760px) {
+      .tabs {
+        grid-template-columns: repeat(1, 1fr);
+      }
+      .tab-button {
+        text-align: left;
+      }
+      .panel {
+        border-radius: 24px;
+      }
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      .tab-panel {
+        padding: 28px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="brand">
+      <h1>Astracrux</h1>
+      <p>欢迎来到 Astracrux，一个适合新手与生电爱好者的 Minecraft 社区服务器✨</p>
+    </header>
+
+    <div class="hero-cta">
+      <p>立即加入 QQ 群获取入服指南，群号 <strong>1953860711</strong>。</p>
+      <a class="button primary" href="https://qm.qq.com/cgi-bin/qm/qr?k=1953860711" target="_blank" rel="noopener noreferrer">点击加群</a>
+    </div>
+
+    <div class="panel">
+      <div class="tabs" role="tablist">
+        <button class="tab-button active" role="tab" aria-selected="true" data-tab="server">服务器信息</button>
+        <button class="tab-button" role="tab" aria-selected="false" data-tab="game">游戏信息</button>
+        <button class="tab-button" role="tab" aria-selected="false" data-tab="join">加入渠道</button>
+      </div>
+
+      <div class="tab-panel" id="server" role="tabpanel">
+        <h2>服务器信息</h2>
+        <p>欢迎来到 Astracrux</p>
+        <div class="info-grid">
+          <div class="info-card">
+            <strong>服务器地址</strong>
+            <p>astracrux.top</p>
+          </div>
+          <div class="info-card">
+            <strong>跨端联机</strong>
+            <p>Java / Bedrock 同服，进服更方便，大家一起玩得更顺手。</p>
+          </div>
+          <div class="info-card">
+            <strong>长期运营</strong>
+            <p>集资支持，低成本稳定维护，社区更可靠。</p>
+          </div>
+          <div class="info-card">
+            <strong>轻松氛围</strong>
+            <p>氛围友好，没有游玩负担，有很多热衷生电和建筑的群友。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="game" role="tabpanel" hidden>
+        <h2>游戏信息</h2>
+        <p>Astracrux 基于 <span class="highlight">Fabric</span>，让你在原生体验中享受更稳定、易上手的多人环境。</p>
+        <ul>
+          <li>⚙️ <strong>Fabric</strong>：轻量兼容、运行顺畅，新手也能快速加入。</li>
+          <li>🌐 <strong>Geyser</strong>：Java 与 Bedrock 玩家无缝同服，同伙伴一起开局更轻松。</li>
+          <li>🧩 <strong>ViaVersion</strong>：多版本兼容，老版本和新版本都能一起玩。</li>
+          <li>✨ 仅保留少量生电模组及必要运维模组，保持原版手感为主。</li>
+          <li>🎯 目标是让你玩得舒心：原生体验、稳定服务、简单易上手。</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" id="join" role="tabpanel" hidden>
+        <h2>加入渠道</h2>
+        <p>欢迎新玩家来探索 Astracrux，群里有暖心玩家。</p>
+        <ul>
+          <li>QQ群：<strong>1953860711</strong></li>
+          <li>官网：<strong>astracrux.top</strong></li>
+          <li>群里常有生电、建筑与萌新交流，氛围轻松友好。</li>
+        </ul>
+        <div class="cta">
+          <a class="button primary" href="https://qm.qq.com/cgi-bin/qm/qr?k=1953860711" target="_blank" rel="noopener noreferrer">加入 QQ 群</a>
+        </div>
+      </div>
+    </div>
+
+    <footer>© 2026 Astracrux</footer>
+  </div>
+
+  <script>
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.tab;
+
+        tabButtons.forEach(btn => {
+          btn.classList.toggle('active', btn === button);
+          btn.setAttribute('aria-selected', btn === button);
+        });
+
+        tabPanels.forEach(panel => {
+          const isTarget = panel.id === target;
+          panel.hidden = !isTarget;
+        });
+      });
+    });
+  </script>
+</body>
+</html>
